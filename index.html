@@ -11,83 +11,53 @@
 
   <script>
     const SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pubhtml";
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pub?output=csv";
 
     const TARGET_ID = "team01"; // test ID
 
     const debugEl = document.getElementById("debug");
-    debugEl.innerText = "Starting fetch…";
+    debugEl.innerText = "Fetching CSV…";
 
     fetch(SHEET_URL)
-      .then(response => {
-        debugEl.innerText = "Fetch completed. Reading text…";
-        return response.text();
-      })
-      .then(html => {
-        debugEl.innerText = "Parsing HTML…";
+      .then(response => response.text())
+      .then(csv => {
+        debugEl.innerText = "Parsing CSV…";
 
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
+        const rows = csv
+          .trim()
+          .split("\n")
+          .map(row => row.split(","));
 
-        const rows = doc.querySelectorAll("table tr");
-        debugEl.innerText = "Found " + rows.length + " table rows.";
-
-        // Find header row
-        let headerRow = null;
-        for (let row of rows) {
-          if (row.innerText.includes("Assigned Nexora ID")) {
-            headerRow = row;
-            break;
-          }
-        }
-
-        if (!headerRow) {
-          document.getElementById("profile-name").innerText =
-            "Header row not found";
-          debugEl.innerText += " | Header row missing.";
-          return;
-        }
-
-        const headers = Array.from(headerRow.children).map(cell =>
-          cell.innerText.trim()
-        );
+        const headers = rows[0].map(h => h.trim());
 
         const idIndex = headers.indexOf("Assigned Nexora ID");
         const nameIndex = headers.indexOf("Display Name");
 
-        debugEl.innerText +=
-          " | ID index: " + idIndex +
-          " | Name index: " + nameIndex;
-
         if (idIndex === -1 || nameIndex === -1) {
           document.getElementById("profile-name").innerText =
             "Required columns not found";
+          debugEl.innerText += " | Header mismatch";
           return;
         }
 
-        // Find matching student row
         for (let i = 1; i < rows.length; i++) {
-          const cells = rows[i].children;
-          if (!cells[idIndex]) continue;
-
-          const idValue = cells[idIndex].innerText.trim();
-          if (idValue === TARGET_ID) {
+          const row = rows[i];
+          if (row[idIndex] && row[idIndex].trim() === TARGET_ID) {
             document.getElementById("profile-name").innerText =
-              cells[nameIndex].innerText.trim();
-            debugEl.innerText += " | Match found.";
+              row[nameIndex].trim();
+            debugEl.innerText += " | Match found";
             return;
           }
         }
 
         document.getElementById("profile-name").innerText =
           "Team not found";
-        debugEl.innerText += " | No matching ID.";
+        debugEl.innerText += " | No match";
       })
       .catch(err => {
         document.getElementById("profile-name").innerText =
           "Error loading data";
         debugEl.innerText = "ERROR: " + err.message;
-        console.error(err);
       });
   </script>
 
