@@ -2,27 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Nexora Profile Test</title>
+  <title>Nexora Profile</title>
 </head>
 <body>
 
   <h1 id="profile-name">Loading...</h1>
-  <p id="debug" style="font-family: monospace; color: #555;"></p>
 
   <script>
     const SHEET_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pub?output=csv";
 
-    const TARGET_ID = "team01"; // test ID
+    // 🔹 STEP 1: get student ID from URL
+    // example: index.html?id=team17
+    const params = new URLSearchParams(window.location.search);
+    const TARGET_ID = params.get("id");
 
-    const debugEl = document.getElementById("debug");
-    debugEl.innerText = "Fetching CSV…";
+    if (!TARGET_ID) {
+      document.getElementById("profile-name").innerText =
+        "No team ID provided in URL.";
+      throw new Error("Missing ?id= parameter");
+    }
 
     fetch(SHEET_URL)
       .then(response => response.text())
       .then(csv => {
-        debugEl.innerText = "Parsing CSV…";
-
         const rows = csv
           .trim()
           .split("\n")
@@ -35,8 +38,7 @@
 
         if (idIndex === -1 || nameIndex === -1) {
           document.getElementById("profile-name").innerText =
-            "Required columns not found";
-          debugEl.innerText += " | Header mismatch";
+            "Required columns not found.";
           return;
         }
 
@@ -45,19 +47,15 @@
           if (row[idIndex] && row[idIndex].trim() === TARGET_ID) {
             document.getElementById("profile-name").innerText =
               row[nameIndex].trim();
-            debugEl.innerText += " | Match found";
             return;
           }
         }
 
         document.getElementById("profile-name").innerText =
-          "Team not found";
-        debugEl.innerText += " | No match";
+          "Team not found.";
       })
       .catch(err => {
-        document.getElementById("profile-name").innerText =
-          "Error loading data";
-        debugEl.innerText = "ERROR: " + err.message;
+        console.error(err);
       });
   </script>
 
