@@ -6,58 +6,32 @@
 </head>
 <body>
 
-  <h1 id="profile-name">Loading...</h1>
+  <div class="page">
+  <div class="header">
+    <img id="profile-image" alt="Profile image">
+    <div class="title-block">
+      <h1 id="profile-name">Loading...</h1>
+      <h2 id="profile-role"></h2>
+      <span class="company">Nexora</span>
+    </div>
+  </div>
 
-  <script>
-    const SHEET_URL =
-      "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pub?output=csv";
+  <section>
+    <h3 class="section-title">Background</h3>
+    <p id="profile-background"></p>
+  </section>
 
-    // 🔹 STEP 1: get student ID from URL
-    // example: index.html?id=team17
-    const params = new URLSearchParams(window.location.search);
-    const TARGET_ID = params.get("id");
+  <section>
+    <h3 class="section-title">Leadership Style</h3>
+    <p id="profile-style"></p>
+  </section>
 
-    if (!TARGET_ID) {
-      document.getElementById("profile-name").innerText =
-        "No team ID provided in URL.";
-      throw new Error("Missing ?id= parameter");
-    }
+  <section id="interests-section" style="display:none;">
+    <h3 class="section-title">Personal Interests</h3>
+    <p id="profile-interests"></p>
+  </section>
+</div>
 
-    fetch(SHEET_URL)
-      .then(response => response.text())
-      .then(csv => {
-        const rows = csv
-          .trim()
-          .split("\n")
-          .map(row => row.split(","));
-
-        const headers = rows[0].map(h => h.trim());
-
-        const idIndex = headers.indexOf("Assigned Nexora ID");
-        const nameIndex = headers.indexOf("Display Name");
-
-        if (idIndex === -1 || nameIndex === -1) {
-          document.getElementById("profile-name").innerText =
-            "Required columns not found.";
-          return;
-        }
-
-        for (let i = 1; i < rows.length; i++) {
-          const row = rows[i];
-          if (row[idIndex] && row[idIndex].trim() === TARGET_ID) {
-            document.getElementById("profile-name").innerText =
-              row[nameIndex].trim();
-            return;
-          }
-        }
-
-        document.getElementById("profile-name").innerText =
-          "Team not found.";
-      })
-      .catch(err => {
-        console.error(err);
-      });
-  </script>
 
 </body>
 </html>
