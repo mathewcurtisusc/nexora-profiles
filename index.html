@@ -162,12 +162,19 @@
             document.getElementById("interests-section").style.display = "block";
           }
 
-        // Profile image (raw link from sheet — temporary)
+     // Profile image (Drive direct render)
 const imageCell = row[imageIndex];
 
 if (imageCell) {
-  document.getElementById("profile-image").src = imageCell;
+  const match = imageCell.match(/id=([^&]+)/);
+
+  if (match) {
+    const fileId = match[1];
+    document.getElementById("profile-image").src =
+      `https://drive.google.com/uc?export=view&id=${fileId}`;
+  }
 }
+
 
 return;
 }
