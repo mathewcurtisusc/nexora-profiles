@@ -162,32 +162,10 @@
             document.getElementById("interests-section").style.display = "block";
           }
 
-          // Profile image (Google Drive – robust)
-if (row[imageIndex]) {
-  const raw = row[imageIndex];
-  let fileId = null;
+          // Profile image (static test)
+document.getElementById("profile-image").src =
+  "/nexora-profiles/images/test.jpg";
 
-  // Case 1: open?id=FILE_ID
-  if (raw.includes("id=")) {
-    fileId = raw.split("id=")[1].split("&")[0];
-  }
-  // Case 2: /file/d/FILE_ID/
-  else if (raw.includes("/file/d/")) {
-    fileId = raw.split("/file/d/")[1].split("/")[0];
-  }
-  // Case 3: already a bare ID
-  else if (raw.length > 20 && !raw.includes("/")) {
-    fileId = raw;
-  }
-
-  if (fileId) {
- document.getElementById("profile-image").src =
-  "https://drive.google.com/thumbnail?id=" + fileId + "&sz=w1000";
-
-
-
-  }
-}
 
 
           return;
