@@ -162,7 +162,7 @@
             document.getElementById("interests-section").style.display = "block";
           }
 
-     // Profile image (Drive direct render)
+// Profile image (Drive CDN render — reliable)
 const imageCell = row[imageIndex];
 
 if (imageCell) {
@@ -171,7 +171,7 @@ if (imageCell) {
   if (match) {
     const fileId = match[1];
     document.getElementById("profile-image").src =
-      `https://drive.google.com/uc?export=view&id=${fileId}`;
+      `https://lh3.googleusercontent.com/d/${fileId}`;
   }
 }
 
