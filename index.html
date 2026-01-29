@@ -162,15 +162,17 @@
             document.getElementById("interests-section").style.display = "block";
           }
 
-          // Profile image (will be set dynamically)
-document.getElementById("profile-image").removeAttribute("src");
+        // Profile image (raw link from sheet — temporary)
+const imageCell = row[imageIndex];
 
+if (imageCell) {
+  document.getElementById("profile-image").src = imageCell;
+}
 
+return;
+}
+}
 
-
-          return;
-        }
-      }
 
       document.getElementById("profile-name").innerText =
         "Team not found.";
