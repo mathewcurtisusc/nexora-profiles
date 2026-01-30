@@ -76,6 +76,14 @@
 <body>
 
   <div class="page">
+<div id="error-message" style="display:none;">
+  <h1>Profile not found</h1>
+  <p>
+    The team ID in the link is missing or invalid.
+    Please check the URL or contact your instructor.
+  </p>
+</div>
+
   <div class="header">
     <img id="profile-image" alt="Profile image">
     <div class="title-block">
@@ -109,11 +117,11 @@
   const params = new URLSearchParams(window.location.search);
   const TARGET_ID = params.get("id");
 
-  if (!TARGET_ID) {
-    document.getElementById("profile-name").innerText =
-      "No team ID provided.";
-    throw new Error("Missing ?id= parameter");
-  }
+ if (!TARGET_ID) {
+  showError("No team ID was provided in the URL.");
+  throw new Error("Missing ?id= parameter");
+}
+
 
   fetch(SHEET_URL)
     .then(response => response.text())
@@ -191,9 +199,8 @@ return;
 }
 }
 
+showError(`No profile found for team ID "${TARGET_ID}".`);
 
-      document.getElementById("profile-name").innerText =
-        "Team not found.";
     })
     .catch(err => {
       console.error(err);
