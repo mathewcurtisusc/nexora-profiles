@@ -121,6 +121,13 @@
   showError("No team ID was provided in the URL.");
   throw new Error("Missing ?id= parameter");
 }
+function showError(message) {
+  document.querySelector(".header").style.display = "none";
+  document.querySelectorAll("section").forEach(s => s.style.display = "none");
+  const errorDiv = document.getElementById("error-message");
+  errorDiv.style.display = "block";
+  errorDiv.querySelector("p").innerText = message;
+}
 
 
   fetch(SHEET_URL)
@@ -136,15 +143,18 @@
         );
 
       const headers = rows[0];
+const cleanHeaders = headers.map(h => h.replace(/\r/g, ""));
 
-      const idIndex = headers.indexOf("Assigned Nexora ID");
-      const nameIndex = headers.indexOf("Display Name");
-      const roleIndex = headers.indexOf("Role / Title");
-      const backgroundIndex = headers.indexOf("Professional Background");
-      const styleIndex = headers.indexOf("Leadership / Decision Style");
-      const interestsIndex = headers.indexOf("Personal");
-      const imageIndex = headers.indexOf("Nexora Profile Image");
-const idStatusIndex = headers.indexOf("ID_Status");
+     const idIndex = cleanHeaders.indexOf("Assigned Nexora ID");
+const nameIndex = cleanHeaders.indexOf("Display Name");
+const roleIndex = cleanHeaders.indexOf("Role / Title");
+const backgroundIndex = cleanHeaders.indexOf("Professional Background");
+const styleIndex = cleanHeaders.indexOf("Leadership / Decision Style");
+const interestsIndex = cleanHeaders.indexOf("Personal");
+const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
+const idStatusIndex = cleanHeaders.indexOf("ID_Status");
+
+      
 console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
@@ -216,6 +226,7 @@ showError(`No profile found for team ID "${TARGET_ID}".`);
 
 </body>
 </html>
+
 
 
 
