@@ -162,16 +162,26 @@
             document.getElementById("interests-section").style.display = "block";
           }
 
-// Profile image (Drive CDN render — reliable)
+// Profile image (validated, with fallback)
+const imageElement = document.getElementById("profile-image");
+const fallbackImage = "/nexora-profiles/images/default.jpg";
+
+imageElement.src = fallbackImage;
+
 const imageCell = row[imageIndex];
 
 if (imageCell) {
-  const match = imageCell.match(/id=([^&]+)/);
+  const match = imageCell.match(/id=([a-zA-Z0-9_-]+)/);
 
   if (match) {
     const fileId = match[1];
-    document.getElementById("profile-image").src =
-      `https://lh3.googleusercontent.com/d/${fileId}`;
+    const driveImageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
+
+    imageElement.onerror = () => {
+      imageElement.src = fallbackImage;
+    };
+
+    imageElement.src = driveImageUrl;
   }
 }
 
