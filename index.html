@@ -3,87 +3,88 @@
 <head>
   <meta charset="UTF-8">
   <title>Nexora Profile</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f7;
-    margin: 0;
-    padding: 0;
-    color: #222;
-  }
 
-  .page {
-    max-width: 900px;
-    margin: 40px auto;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    padding: 32px 40px;
-  }
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f7;
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
 
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 24px;
-    margin-bottom: 24px;
-  }
+    .page {
+      max-width: 900px;
+      margin: 40px auto;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 32px 40px;
+    }
 
-  .header img {
-    width: 180px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 4px;
-  }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+    }
 
-  .title-block h1 {
-    margin: 0;
-    font-size: 26px;
-  }
+    .header img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
 
-  .title-block h2 {
-    margin: 4px 0 8px 0;
-    font-size: 16px;
-    font-weight: normal;
-    color: #666;
-  }
+    .title-block h1 {
+      margin: 0;
+      font-size: 26px;
+    }
 
-  .company {
-    font-size: 13px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: #999;
-  }
+    .title-block h2 {
+      margin: 4px 0 8px 0;
+      font-size: 16px;
+      font-weight: normal;
+      color: #666;
+    }
 
-  .section-title {
-    margin-top: 18px;
-    margin-bottom: 8px;
-    font-size: 14px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #555;
-  }
+    .company {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #999;
+    }
 
-  p {
-    line-height: 1.5;
-    font-size: 14px;
-    margin: 0 0 12px 0;
-  }
-</style>
+    .section-title {
+      margin-top: 18px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #555;
+    }
 
+    p {
+      line-height: 1.5;
+      font-size: 14px;
+      margin: 0 0 12px 0;
+    }
+  </style>
 </head>
+
 <body>
 
-  <div class="page">
-<div id="error-message" style="display:none;">
-  <h1>Profile not found</h1>
-  <p>
-    The team ID in the link is missing or invalid.
-    Please check the URL or contact your instructor.
-  </p>
-</div>
+<div class="page">
 
+  <!-- Error message -->
+  <div id="error-message" style="display:none;">
+    <h1>Profile not found</h1>
+    <p></p>
+  </div>
+
+  <!-- Profile -->
   <div class="header">
     <img id="profile-image" alt="Profile image">
     <div class="title-block">
@@ -107,33 +108,39 @@
     <h3 class="section-title">Personal Interests</h3>
     <p id="profile-interests"></p>
   </section>
+
 </div>
 
 <script>
   const SHEET_URL =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pub?output=csv";
 
-  // Read team ID from URL, e.g. ?id=team01
   const params = new URLSearchParams(window.location.search);
   const TARGET_ID = params.get("id");
 
- if (!TARGET_ID) {
-  showError("No team ID was provided in the URL.");
-  throw new Error("Missing ?id= parameter");
-}
+  function showError(message) {
+    document.querySelectorAll(".header, section").forEach(el => {
+      el.style.display = "none";
+    });
 
+    const errorDiv = document.getElementById("error-message");
+    errorDiv.querySelector("p").innerText = message;
+    errorDiv.style.display = "block";
+  }
+
+  if (!TARGET_ID) {
+    showError("No team ID was provided in the URL.");
+    throw new Error("Missing ?id=");
+  }
 
   fetch(SHEET_URL)
     .then(response => response.text())
     .then(csv => {
-      const rows = csv
-        .trim()
-        .split("\n")
-        .map(row =>
-          row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell =>
-            cell.replace(/^"|"$/g, "").trim()
-          )
-        );
+      const rows = csv.trim().split("\n").map(row =>
+        row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell =>
+          cell.replace(/^"|"$/g, "").trim()
+        )
+      );
 
       const headers = rows[0];
 
@@ -145,67 +152,52 @@
       const interestsIndex = headers.indexOf("Personal");
       const imageIndex = headers.indexOf("Nexora Profile Image");
 
+      let found = false;
+
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
 
         if (row[idIndex] === TARGET_ID) {
-          // Name
+          found = true;
+
           document.getElementById("profile-name").innerText = row[nameIndex] || "";
-
-          // Role
           document.getElementById("profile-role").innerText = row[roleIndex] || "";
+          document.getElementById("profile-background").innerText = row[backgroundIndex] || "";
+          document.getElementById("profile-style").innerText = row[styleIndex] || "";
 
-          // Background
-          document.getElementById("profile-background").innerText =
-            row[backgroundIndex] || "";
-
-          // Leadership style
-          document.getElementById("profile-style").innerText =
-            row[styleIndex] || "";
-
-          // Personal interests (optional)
           if (row[interestsIndex]) {
-            document.getElementById("profile-interests").innerText =
-              row[interestsIndex];
+            document.getElementById("profile-interests").innerText = row[interestsIndex];
             document.getElementById("interests-section").style.display = "block";
           }
 
-// Profile image (validated, with fallback)
-const imageElement = document.getElementById("profile-image");
-const fallbackImage = "/nexora-profiles/images/default.jpg";
+          // Image handling
+          const imageElement = document.getElementById("profile-image");
+          const fallbackImage = "/nexora-profiles/images/logo.png";
+          imageElement.src = fallbackImage;
 
-imageElement.src = fallbackImage;
+          const imageCell = row[imageIndex];
+          if (imageCell) {
+            const match = imageCell.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match) {
+              const fileId = match[1];
+              imageElement.onerror = () => {
+                imageElement.src = fallbackImage;
+              };
+              imageElement.src = `https://lh3.googleusercontent.com/d/${fileId}`;
+            }
+          }
 
-const imageCell = row[imageIndex];
+          return;
+        }
+      }
 
-if (imageCell) {
-  const match = imageCell.match(/id=([a-zA-Z0-9_-]+)/);
-
-  if (match) {
-    const fileId = match[1];
-    const driveImageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
-
-    imageElement.onerror = () => {
-      imageElement.src = fallbackImage;
-    };
-
-    imageElement.src = driveImageUrl;
-  }
-}
-
-
-
-return;
-}
-}
-
-showError(`No profile found for team ID "${TARGET_ID}".`);
-
+      if (!found) {
+        showError(`No profile found for team ID "${TARGET_ID}".`);
+      }
     })
     .catch(err => {
       console.error(err);
-      document.getElementById("profile-name").innerText =
-        "Error loading profile.";
+      showError("There was an error loading this profile.");
     });
 </script>
 
