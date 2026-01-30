@@ -149,10 +149,11 @@ console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
-        console.log("ID:", row[idIndex], "Status:", row[idStatusIndex]);
 
-
-        if (row[idIndex] === TARGET_ID) {
+if (
+  row[idIndex] === TARGET_ID &&
+  row[idStatusIndex] === "OK"
+) {
           // Name
           document.getElementById("profile-name").innerText = row[nameIndex] || "";
 
@@ -215,5 +216,6 @@ showError(`No profile found for team ID "${TARGET_ID}".`);
 
 </body>
 </html>
+
 
 
