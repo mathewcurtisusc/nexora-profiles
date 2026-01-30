@@ -144,6 +144,8 @@
       const styleIndex = headers.indexOf("Leadership / Decision Style");
       const interestsIndex = headers.indexOf("Personal");
       const imageIndex = headers.indexOf("Nexora Profile Image");
+const idStatusIndex = headers.indexOf("ID_Status");
+console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
@@ -211,3 +213,4 @@ showError(`No profile found for team ID "${TARGET_ID}".`);
 
 </body>
 </html>
+
