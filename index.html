@@ -149,6 +149,8 @@ console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
+        console.log("ID:", row[idIndex], "Status:", row[idStatusIndex]);
+
 
         if (row[idIndex] === TARGET_ID) {
           // Name
@@ -213,4 +215,5 @@ showError(`No profile found for team ID "${TARGET_ID}".`);
 
 </body>
 </html>
+
 
