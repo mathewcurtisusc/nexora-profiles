@@ -223,8 +223,9 @@ return;
 }
 
 if (duplicateFound) {
-  showError(
-    "This profile is temporarily unavailable because the assigned Nexora ID is duplicated."
+showError(
+  "This profile is temporarily unavailable because the assigned Nexora ID is duplicated. " +
+  "Please double-check your assigned ID in the form and resubmit, or contact your instructor if you believe this is an error."
   );
 } else {
   showError(`No profile found for team ID "${TARGET_ID}".`);
@@ -240,6 +241,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
