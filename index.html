@@ -154,11 +154,19 @@ const interestsIndex = cleanHeaders.indexOf("Personal");
 const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
 const idStatusIndex = cleanHeaders.indexOf("ID_Status");
 
-      
+
+      let duplicateFound = false;
+
 console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
+if (
+  row[idIndex] === TARGET_ID &&
+  row[idStatusIndex] === "DUPLICATE"
+) {
+  duplicateFound = true;
+}
 
 if (
   row[idIndex] === TARGET_ID &&
@@ -214,7 +222,13 @@ return;
 }
 }
 
-showError(`No profile found for team ID "${TARGET_ID}".`);
+if (duplicateFound) {
+  showError(
+    "This profile is temporarily unavailable because the assigned Nexora ID is duplicated."
+  );
+} else {
+  showError(`No profile found for team ID "${TARGET_ID}".`);
+}
 
     })
     .catch(err => {
@@ -226,6 +240,7 @@ showError(`No profile found for team ID "${TARGET_ID}".`);
 
 </body>
 </html>
+
 
 
 
