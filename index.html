@@ -179,19 +179,20 @@ if (
           document.getElementById("profile-role").innerText = row[roleIndex] || "";
 
           // Background
-          document.getElementById("profile-background").innerText =
-            row[backgroundIndex] || "";
+    if (row[backgroundIndex]) {
+  document.getElementById("profile-background").innerText = row[backgroundIndex];
+} else {
+  document.querySelector('section:nth-of-type(1)').style.display = "none";
+}
+
 
           // Leadership style
-          document.getElementById("profile-style").innerText =
-            row[styleIndex] || "";
+if (row[styleIndex]) {
+  document.getElementById("profile-style").innerText = row[styleIndex];
+} else {
+  document.querySelector('section:nth-of-type(2)').style.display = "none";
+}
 
-          // Personal interests (optional)
-          if (row[interestsIndex]) {
-            document.getElementById("profile-interests").innerText =
-              row[interestsIndex];
-            document.getElementById("interests-section").style.display = "block";
-          }
 
 // Profile image (validated, with fallback)
 const imageElement = document.getElementById("profile-image");
@@ -241,6 +242,7 @@ showError(
 
 </body>
 </html>
+
 
 
 
