@@ -172,7 +172,6 @@ if (
 if (
 row[idIndex] === TARGET_ID &&
 row[idStatusIndex] === "OK" &&
-row[lockIndex] !== "TRUE"
 
 ) {
           // Name
@@ -231,22 +230,10 @@ if (duplicateFound) {
     "This profile is temporarily unavailable because the assigned Nexora ID is duplicated. " +
     "Please double-check your assigned ID in the form and resubmit, or contact your instructor if you believe this is an error."
   );
-} else if (lockIndex !== -1) {
-  // Check if the ID exists but is locked
-  const lockedRow = rows.find(r =>
-    r[idIndex] === TARGET_ID && r[lockIndex] === "TRUE"
-  );
-
-  if (lockedRow) {
-    showError(
-      "This profile is locked and can no longer be edited. Please contact your instructor if you believe this is a mistake."
-    );
-  } else {
-    showError(`No profile found for team ID "${TARGET_ID}".`);
-  }
 } else {
   showError(`No profile found for team ID "${TARGET_ID}".`);
 }
+
 
 
     })
@@ -259,6 +246,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
