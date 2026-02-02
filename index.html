@@ -194,6 +194,13 @@ if (row[styleIndex]) {
 } else {
   document.querySelector('section:nth-of-type(2)').style.display = "none";
 }
+// Personal interests
+if (row[interestsIndex]) {
+  document.getElementById("profile-interests").innerText = row[interestsIndex];
+  document.getElementById("interests-section").style.display = "block";
+} else {
+  document.getElementById("interests-section").style.display = "none";
+}
 
 
 // Profile image (validated, with fallback)
@@ -246,6 +253,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
