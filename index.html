@@ -46,10 +46,6 @@
   object-fit: contain;
   background-color: #f5f5f7;
 }
-.header img.default-image {
-  object-fit: contain;
-  background-color: #f5f5f7;
-}
 
 .photo-note {
   font-size: 11px;
@@ -242,9 +238,8 @@ if (row[interestsIndex]) {
 const imageElement = document.getElementById("profile-image");
 const fallbackImage = "/nexora-profiles/images/logo.png";
   function showDefaultImage() {
- showDefaultImage();
+  showDefaultImage();
 
-    
 
   if (
     !imageElement.nextElementSibling ||
@@ -258,8 +253,9 @@ const fallbackImage = "/nexora-profiles/images/logo.png";
 }
 
 
-imageElement.src = fallbackImage;
-imageElement.classList.add("default-image");
+
+showDefaultImage();
+
 
 const imageCell = row[imageIndex];
 
@@ -314,6 +310,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
