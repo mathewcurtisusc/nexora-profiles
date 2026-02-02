@@ -238,8 +238,8 @@ if (row[interestsIndex]) {
 const imageElement = document.getElementById("profile-image");
 const fallbackImage = "/nexora-profiles/images/logo.png";
   function showDefaultImage() {
-  showDefaultImage();
-
+  imageElement.src = fallbackImage;
+  imageElement.classList.add("default-image");
 
   if (
     !imageElement.nextElementSibling ||
@@ -251,6 +251,7 @@ const fallbackImage = "/nexora-profiles/images/logo.png";
     imageElement.after(note);
   }
 }
+
 
 
 
@@ -302,14 +303,15 @@ if (duplicateFound) {
 
     })
     .catch(err => {
-      console.error(err);
-      document.getElementById("profile-name").innerText =
-        "Error loading profile.";
-    });
+  console.error(err);
+  showError("An unexpected error occurred while loading this profile.");
+});
+
 </script>
 
 </body>
 </html>
+
 
 
 
