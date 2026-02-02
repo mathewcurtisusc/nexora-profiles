@@ -117,6 +117,10 @@
   // Read team ID from URL, e.g. ?id=team01
   const params = new URLSearchParams(window.location.search);
   const TARGET_ID = params.get("id");
+  const NORMALIZED_TARGET_ID = TARGET_ID
+  ? TARGET_ID.trim().toLowerCase()
+  : null;
+
 
  if (!TARGET_ID) {
   showError("No team ID was provided in the URL.");
@@ -156,6 +160,14 @@ const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
 const idStatusIndex = cleanHeaders.indexOf("ID_Status");
 
 const lockIndex = cleanHeaders.indexOf("Submission Locked");
+const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
+
+      if (normalizedIdIndex === -1) {
+  showError(
+    "Configuration error: Required column 'Normalized Nexora ID' was not found."
+  );
+  throw new Error("Missing Normalized Nexora ID column");
+}
 
       let duplicateFound = false;
 
@@ -164,17 +176,18 @@ console.log("ID_Status index:", idStatusIndex);
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
 if (
-  row[idIndex] === TARGET_ID &&
+  row[normalizedIdIndex] === NORMALIZED_TARGET_ID &&
   row[idStatusIndex] === "DUPLICATE"
 ) {
   duplicateFound = true;
 }
 
-if (
-row[idIndex] === TARGET_ID &&
-row[idStatusIndex] === "OK"
 
+if (
+  row[normalizedIdIndex] === NORMALIZED_TARGET_ID &&
+  row[idStatusIndex] === "OK"
 ) {
+
           // Name
           document.getElementById("profile-name").innerText = row[nameIndex] || "";
 
@@ -257,6 +270,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
