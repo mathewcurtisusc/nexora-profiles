@@ -46,6 +46,17 @@
   object-fit: contain;
   background-color: #f5f5f7;
 }
+.header img.default-image {
+  object-fit: contain;
+  background-color: #f5f5f7;
+}
+
+.photo-note {
+  font-size: 11px;
+  color: #888;
+  margin-top: 6px;
+  text-align: center;
+}
 
   .title-block h2 {
     margin: 4px 0 8px 0;
@@ -230,6 +241,22 @@ if (row[interestsIndex]) {
 // Profile image (validated, with fallback)
 const imageElement = document.getElementById("profile-image");
 const fallbackImage = "/nexora-profiles/images/logo.png";
+  function showDefaultImage() {
+ showDefaultImage();
+
+    
+
+  if (
+    !imageElement.nextElementSibling ||
+    !imageElement.nextElementSibling.classList.contains("photo-note")
+  ) {
+    const note = document.createElement("div");
+    note.className = "photo-note";
+    note.innerText = "No photo provided";
+    imageElement.after(note);
+  }
+}
+
 
 imageElement.src = fallbackImage;
 imageElement.classList.add("default-image");
@@ -243,16 +270,19 @@ if (imageCell) {
     const fileId = match[1];
     const driveImageUrl = `https://lh3.googleusercontent.com/d/${fileId}`;
 
-    imageElement.onerror = () => {
-      imageElement.src = fallbackImage;
-      imageElement.classList.add("default-image");
-    };
+imageElement.onerror = () => {
+  showDefaultImage();
+};
 
-    imageElement.onload = () => {
-      imageElement.classList.remove("default-image");
-    };
+imageElement.onload = () => {
+  imageElement.classList.remove("default-image");
 
-    imageElement.src = driveImageUrl;
+  const note = imageElement.parentElement.querySelector(".photo-note");
+  if (note) note.remove();
+};
+
+imageElement.src = driveImageUrl;
+
   }
 }
 
@@ -284,6 +314,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
