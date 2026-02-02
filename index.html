@@ -36,6 +36,12 @@
     object-fit: cover;
     border-radius: 4px;
   }
+  .photo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 
   .title-block h1 {
     margin: 0;
@@ -97,8 +103,11 @@
 </div>
 
   <div class="header">
+  <div class="photo-container">
     <img id="profile-image" alt="Profile image">
-    <div class="title-block">
+  </div>
+  <div class="title-block">
+
       <h1 id="profile-name">Loading...</h1>
       <h2 id="profile-role"></h2>
       <span class="company">Nexora</span>
@@ -254,7 +263,7 @@ function showDefaultImage() {
     const note = document.createElement("div");
     note.className = "photo-note";
     note.innerText = "No photo provided";
-    imageElement.after(note);
+imageElement.parentElement.appendChild(note);
   }
 }
 
@@ -315,6 +324,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
