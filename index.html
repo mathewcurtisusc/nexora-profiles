@@ -176,17 +176,19 @@ console.log("ID_Status index:", idStatusIndex);
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
 if (
-  row[normalizedIdIndex] === NORMALIZED_TARGET_ID &&
+  row[normalizedIdIndex]?.trim().toLowerCase() === NORMALIZED_TARGET_ID &&
   row[idStatusIndex] === "DUPLICATE"
 ) {
   duplicateFound = true;
 }
 
 
+
 if (
-  row[normalizedIdIndex] === NORMALIZED_TARGET_ID &&
+  row[normalizedIdIndex]?.trim().toLowerCase() === NORMALIZED_TARGET_ID &&
   row[idStatusIndex] === "OK"
 ) {
+
 
           // Name
           document.getElementById("profile-name").innerText = row[nameIndex] || "";
@@ -270,6 +272,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
