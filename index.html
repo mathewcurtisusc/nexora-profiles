@@ -266,7 +266,26 @@ const imageCell = row[imageIndex];
 if (imageCell) {
   const match = imageCell.match(/id=([a-zA-Z0-9_-]+)/);
 
+  if (match) {
+    const fileId = match[1];
+    const driveImageUrl =
+      `https://lh3.googleusercontent.com/d/${fileId}`;
+
+    imageElement.onload = () => {
+      imageElement.classList.remove("default-image");
+      const note =
+        imageElement.parentElement.querySelector(".photo-note");
+      if (note) note.remove();
+    };
+
+    imageElement.onerror = () => {
+      showDefaultImage();
+    };
+
+    imageElement.src = driveImageUrl;
+  }
 }
+
 
 
 
@@ -296,6 +315,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
