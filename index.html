@@ -93,12 +93,12 @@
     </div>
   </div>
 
-  <section>
+   <section id="background-section">
     <h3 class="section-title">Background</h3>
     <p id="profile-background"></p>
   </section>
 
-  <section>
+  <section id="style-section">
     <h3 class="section-title">Leadership Style</h3>
     <p id="profile-style"></p>
   </section>
@@ -107,6 +107,7 @@
     <h3 class="section-title">Personal Interests</h3>
     <p id="profile-interests"></p>
   </section>
+
 </div>
 
 <script>
@@ -180,20 +181,24 @@ row[idStatusIndex] === "OK"
           // Role
           document.getElementById("profile-role").innerText = row[roleIndex] || "";
 
-          // Background
-    if (row[backgroundIndex]) {
+         // Background
+if (row[backgroundIndex]) {
   document.getElementById("profile-background").innerText = row[backgroundIndex];
+  document.getElementById("background-section").style.display = "block";
 } else {
-  document.querySelector('section:nth-of-type(1)').style.display = "none";
+  document.getElementById("background-section").style.display = "none";
 }
 
 
-          // Leadership style
+
+       // Leadership style
 if (row[styleIndex]) {
   document.getElementById("profile-style").innerText = row[styleIndex];
+  document.getElementById("style-section").style.display = "block";
 } else {
-  document.querySelector('section:nth-of-type(2)').style.display = "none";
+  document.getElementById("style-section").style.display = "none";
 }
+
 // Personal interests
 if (row[interestsIndex]) {
   document.getElementById("profile-interests").innerText = row[interestsIndex];
@@ -201,7 +206,6 @@ if (row[interestsIndex]) {
 } else {
   document.getElementById("interests-section").style.display = "none";
 }
-
 
 // Profile image (validated, with fallback)
 const imageElement = document.getElementById("profile-image");
@@ -253,6 +257,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
