@@ -306,17 +306,7 @@ if (imageCell) {
 const capIconEl = document.getElementById("cap-choice-icon");
 capIconEl.style.display = "none"; // hide by default
 
-if (capChoiceIndex !== -1 && row[capChoiceIndex]) {
-  const choice = row[capChoiceIndex].trim().toLowerCase();
-
-  if (choice === "cardinal") {
-    capIconEl.src = "/nexora-profiles/images/cap-cardinal.png";
-    capIconEl.alt = "Cardinal cap chosen";
-    capIconEl.style.display = "inline-block";
-  } else if (choice === "gold") {
-    capIconEl.src = "/nexora-profiles/images/cap-gold.png";
-    capIconEl.alt = "Gold cap chosen";
-    capIconEl.style.display = "inline-block";
+const capChoiceIndex = cleanHeaders.indexOf("cap choice");
   }
 }
 
@@ -347,4 +337,5 @@ if (duplicateFound) {
 </body>
 
 </html>
+
 
