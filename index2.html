@@ -109,6 +109,8 @@
   <div class="title-block">
 
       <h1 id="profile-name">Loading...</h1>
+     <img id="cap-choice-icon" alt="Cap choice" style="width:36px;height:36px;display:none;border-radius:4px;box-shadow:0 1px 3px rgba(0,0,0,.08)">
+</div>
       <h2 id="profile-role"></h2>
       <span class="company">Nexora</span>
     </div>
@@ -179,6 +181,10 @@ const styleIndex = cleanHeaders.indexOf("Leadership / Decision Style");
 const interestsIndex = cleanHeaders.indexOf("Personal");
 const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
 const idStatusIndex = cleanHeaders.indexOf("ID_Status");
+      const capChoiceIndex =
+  cleanHeaders.indexOf("Cap Choice") !== -1
+    ? cleanHeaders.indexOf("Cap Choice")
+    : cleanHeaders.indexOf("Cap Choice Normalized");
 
 const lockIndex = cleanHeaders.indexOf("Submission Locked");
 const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
@@ -296,7 +302,23 @@ if (imageCell) {
 }
 
 
+// --- Cap choice icon logic ---
+const capIconEl = document.getElementById("cap-choice-icon");
+capIconEl.style.display = "none"; // hide by default
 
+if (capChoiceIndex !== -1 && row[capChoiceIndex]) {
+  const choice = row[capChoiceIndex].trim().toLowerCase();
+
+  if (choice === "cardinal") {
+    capIconEl.src = "/nexora-profiles/images/cap-cardinal.png";
+    capIconEl.alt = "Cardinal cap chosen";
+    capIconEl.style.display = "inline-block";
+  } else if (choice === "gold") {
+    capIconEl.src = "/nexora-profiles/images/cap-gold.png";
+    capIconEl.alt = "Gold cap chosen";
+    capIconEl.style.display = "inline-block";
+  }
+}
 
 
 return;
@@ -325,3 +347,4 @@ if (duplicateFound) {
 </body>
 
 </html>
+
