@@ -24,7 +24,7 @@
   .header {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 12px;
     border-bottom: 1px solid #e0e0e0;
     padding-bottom: 24px;
     margin-bottom: 24px;
@@ -88,23 +88,25 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
-/* Cap image container: right side of header - fixed box for identical rendering */
+/* Cap image container: right of title, near the name block */
 .cap-container {
   display: flex;
   align-items: center;
-  margin-left: auto;         /* push the cap container to the far right of the header */
+  margin-left: 24px;    /* keep the caps close to the title block, not pushed to the far right */
   gap: 12px;
 }
 
-/* Fixed display box so both caps render the same size regardless of source image dimensions */
-.cap-container img,
+/* Stronger, header-scoped selector so it overrides broader .header img rules.
+   Fixed box ensures identical visible size; object-fit: contain scales the source up to fit. */
+.header .cap-container img,
 .cap-icon {
-  width: 180px;              /* visible width of the cap box — change if you want larger/smaller */
-  height: 140px;             /* visible height of the cap box */
-  object-fit: contain;       /* keep the cap centered and not distorted */
+  width: 220px;         /* visible width of the cap box */
+  height: 170px;        /* visible height of the cap box */
+  object-fit: contain;  /* preserve aspect ratio and center the cap inside the box */
   border-radius: 6px;
   background-color: transparent;
   display: block;
+}
 }
 </style>
 
@@ -377,6 +379,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
