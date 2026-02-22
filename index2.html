@@ -88,24 +88,23 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
-/* Cap image container: right of title, near the name block */
+/* Cap container next to student name */
 .cap-container {
   display: flex;
   align-items: center;
-  margin-left: 24px;    /* keep the caps close to the title block, not pushed to the far right */
+  margin-left: 24px;   /* keeps it near the name */
   gap: 12px;
 }
 
-/* Stronger, header-scoped selector so it overrides broader .header img rules.
-   Fixed box ensures identical visible size; object-fit: contain scales the source up to fit. */
-.header .cap-container img,
-.cap-icon {
-  width: 220px;         /* visible width of the cap box */
-  height: 170px;        /* visible height of the cap box */
-  object-fit: contain;  /* preserve aspect ratio and center the cap inside the box */
+/* Force both caps to fill identical box */
+.header > .cap-container > img.cap-icon {
+  width: 220px;           /* adjust if you want bigger/smaller */
+  height: 170px;
+  object-fit: cover;      /* THIS makes them visually the same size */
+  object-position: center;
   border-radius: 6px;
-  background-color: transparent;
   display: block;
+  max-width: none;
 }
 }
 </style>
@@ -379,6 +378,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
