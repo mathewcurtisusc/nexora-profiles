@@ -88,18 +88,23 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
-  /* Cap image container: right side of header */
+/* Cap image container: right side of header - fixed box for identical rendering */
 .cap-container {
   display: flex;
   align-items: center;
-  margin-left: 40px;   /* controls distance from name block */
+  margin-left: auto;         /* push the cap container to the far right of the header */
+  gap: 12px;
 }
 
-.cap-container img {
-  width: 210px;   /* 140 × 1.5 */
-  height: auto;
+/* Fixed display box so both caps render the same size regardless of source image dimensions */
+.cap-container img,
+.cap-icon {
+  width: 180px;              /* visible width of the cap box — change if you want larger/smaller */
+  height: 140px;             /* visible height of the cap box */
+  object-fit: contain;       /* keep the cap centered and not distorted */
   border-radius: 6px;
-  object-fit: contain;
+  background-color: transparent;
+  display: block;
 }
 </style>
 
@@ -330,6 +335,7 @@ if (capChoiceIndex !== -1) {
     capImg.src = capMap[rawChoice];
     capImg.alt = rawChoice + " cap";
     capImg.loading = "lazy";
+    capImg.classList.add("cap-icon");
 
     capContainer.appendChild(capImg);
 
@@ -371,6 +377,7 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
 
 
