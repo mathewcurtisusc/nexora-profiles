@@ -88,6 +88,19 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
+  /* Cap image container: right side of header */
+.cap-container {
+  margin-left: auto;   /* pushes it to the far right within .header */
+  display: flex;
+  align-items: center;
+}
+
+.cap-container img {
+  width: 140px;
+  height: auto;
+  border-radius: 6px;
+  object-fit: contain;
+}
 </style>
 
 </head>
@@ -292,6 +305,40 @@ if (imageCell) {
     };
 
     imageElement.src = driveImageUrl;
+    // --- BEGIN: cap choice display (right of name/role) ---
+const capChoiceIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "cap choice");
+
+if (capChoiceIndex !== -1) {
+  const rawChoice = (row[capChoiceIndex] || "").trim().toLowerCase();
+
+  const capMap = {
+    "cardinal": "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/cardinal.png",
+    "gold":     "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/gold.png"
+  };
+
+  // Remove any existing cap container to avoid duplicates
+  const prev = document.getElementById("cap-container");
+  if (prev) prev.remove();
+
+  if (capMap[rawChoice]) {
+    // Build container and img
+    const capContainer = document.createElement("div");
+    capContainer.id = "cap-container";
+    capContainer.className = "cap-container";
+
+    const capImg = document.createElement("img");
+    capImg.src = capMap[rawChoice];
+    capImg.alt = rawChoice + " cap";
+    capImg.loading = "lazy";
+
+    capContainer.appendChild(capImg);
+
+    // Append as third child of .header so flex pushes it to the right
+    const headerEl = document.querySelector(".header");
+    if (headerEl) headerEl.appendChild(capContainer);
+  }
+}
+// --- END: cap choice display ---
   }
 }
 
@@ -324,4 +371,5 @@ if (duplicateFound) {
 
 </body>
 </html>
+
 
