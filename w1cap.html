@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Cap Choice Summary</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:28px;color:#111;background:#fbfbfd}
+    h1{font-size:20px;margin:0 0 12px}
+    .card{max-width:720px;border:1px solid #e6e6e6;padding:18px;border-radius:8px;background:#fff}
+    .summaryLine{font-size:16px;margin:8px 0}
+    .muted{color:#666;font-size:13px;margin-top:10px}
+    .error{color:#9b1c1c;background:#fdecea;padding:10px;border-radius:6px}
+    .loading{color:#444}
+    .small{font-size:13px;color:#666}
+  </style>
+</head>
+<body>
+  <h1>Cap Choice Summary</h1>
+  <div class="card" id="card">
+    <div id="content" class="loading">Loading summary…</div>
+    <div class="muted">This page shows aggregated counts only — no student-identifying data is exposed.</div>
+  </div>
+
+<script>
+/*
+  Ready-to-use summary page.
+  Uses your Apps Script web app endpoint (returns JSON: {cardinal:number,gold:number,other:number})
+*/
+const API_URL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQo-fsgNR0w3HxZOQ0SBxKBp2vnBMZFZAJxoLP1v4li1xAArGGNo1pXddASoArryxGAtAX_PvuSbXjXxMreVrgh-UVsmTlso2wCkUpVPaPPP_C-dLMFwObJMneLixiJZgq8uNdFHAotQqeECCpr0cncHHIt-jTq_2-yrHylkX40hUrL5Um_CtMOSHNFI5cUMKCkqsNy14iG9k-XNjD-r-qHEsw0Nenc3hsl-jsXALEq5yYZnm7BevTrmNxSF9iyyUVATQmXks5dA7P6NSqoqefjF4u4cMpyB_hVkcdr&lib=MCcvtjQc_mXpjYuzBMosppL27mcE6tkEG';
+
+const contentEl = document.getElementById('content');
+
+async function renderCounts() {
+  contentEl.textContent = 'Loading summary…';
+  try {
+    const res = await fetch(API_URL, { cache: 'no-store', credentials: 'omit' });
+    if (!res.ok) throw new Error('Network response not ok: ' + res.status);
+    const data = await res.json();
+    if (data.error) {
+      contentEl.innerHTML = '<div class="error">Error: ' + escapeHtml(String(data.error)) + '</div>';
+      return;
+    }
+    const c = Number(data.cardinal || 0);
+    const g = Number(data.gold || 0);
+    const o = Number(data.other || 0);
+    const total = c + g + o;
+    contentEl.innerHTML = `
+      <div class="summaryLine"><strong>Cardinal:</strong> ${c}</div>
+      <div class="summaryLine"><strong>Gold:</strong> ${g}</div>
+      <div class="summaryLine small">Other / other values: ${o}</div>
+      <div class="summaryLine small">Total responses counted: ${total}</div>
+    `;
+  } catch (err) {
+    // If CORS blocks fetch, use JSONP fallback (below) — will attempt automatically
+    console.warn('fetch failed, attempting JSONP fallback:', err);
+    tryJsonpFallback();
+  }
+}
+
+/* JSONP fallback: inject script with callback=handleCounts */
+function tryJsonpFallback() {
+  window.handleCounts = function(data) {
+    if (!data) {
+      contentEl.innerHTML = '<div class="error">No data returned</div>';
+      return;
+    }
+    if (data.error) {
+      contentEl.innerHTML = '<div class="error">Error: ' + escapeHtml(String(data.error)) + '</div>';
+      return;
+    }
+    const c = Number(data.cardinal || 0);
+    const g = Number(data.gold || 0);
+    const o = Number(data.other || 0);
+    const total = c + g + o;
+    contentEl.innerHTML = `
+      <div class="summaryLine"><strong>Cardinal:</strong> ${c}</div>
+      <div class="summaryLine"><strong>Gold:</strong> ${g}</div>
+      <div class="summaryLine small">Other / other values: ${o}</div>
+      <div class="summaryLine small">Total responses counted: ${total}</div>
+    `;
+    cleanupJsonp();
+  };
+
+  const s = document.createElement('script');
+  s.src = API_URL + (API_URL.includes('?') ? '&' : '?') + 'callback=handleCounts';
+  s.async = true;
+  s.onerror = function() {
+    contentEl.innerHTML = '<div class="error">Failed to load summary (network/CORS). See console for details.</div>';
+    cleanupJsonp();
+  };
+  document.head.appendChild(s);
+
+  // Remove callback and script after 30s for safety
+  function cleanupJsonp() {
+    try { delete window.handleCounts; } catch(e) {}
+    const scripts = document.querySelectorAll('script[src^="' + API_URL + '"]');
+    scripts.forEach(el => el.parentNode && el.parentNode.removeChild(el));
+  }
+  setTimeout(cleanupJsonp, 30000);
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"'`=\/]/g, function(ch) {
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','`':'&#96;','=':'&#61;','/':'&#47;'})[ch];
+  });
+}
+
+// Initial load
+renderCounts();
+
+// Optional: auto-refresh every 5 minutes
+// setInterval(renderCounts, 5*60*1000);
+</script>
+</body>
+</html>
