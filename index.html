@@ -24,7 +24,7 @@
   .header {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 12px;
     border-bottom: 1px solid #e0e0e0;
     padding-bottom: 24px;
     margin-bottom: 24px;
@@ -88,6 +88,24 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
+/* Cap container next to student name */
+.cap-container {
+  display: flex;
+  align-items: center;
+  margin-left: 24px;   /* keeps it near the name */
+  gap: 12px;
+}
+
+/* Force both caps to fill identical box */
+.header > .cap-container > img.cap-icon {
+  width: 110px;           /* adjust if you want bigger/smaller */
+  height: 85px;
+  object-fit: cover;      /* THIS makes them visually the same size */
+  object-position: center;
+  border-radius: 6px;
+  display: block;
+  max-width: none;
+}
 </style>
 
 </head>
@@ -134,7 +152,7 @@
 <script>
   const SHEET_URL =
     "https://docs.google.com/spreadsheets/d/e/2PACX-1vS2wW-ulUPyRcOy_xPMnzy0AxudKP-4RFYoZYMzTWAqMqTZvrtH1e1SiI183163SUkiGF2EM1CHlihQ/pub?output=csv";
-
+  
   // Read team ID from URL, e.g. ?id=team01
   const params = new URLSearchParams(window.location.search);
   const TARGET_ID = params.get("id");
@@ -292,6 +310,41 @@ if (imageCell) {
     };
 
     imageElement.src = driveImageUrl;
+    // --- BEGIN: cap choice display (right of name/role) ---
+const capChoiceIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "cap choice");
+
+if (capChoiceIndex !== -1) {
+  const rawChoice = (row[capChoiceIndex] || "").trim().toLowerCase();
+
+  const capMap = {
+    "cardinal": "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/cardinal.png",
+    "gold":     "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/gold.png"
+  };
+
+  // Remove any existing cap container to avoid duplicates
+  const prev = document.getElementById("cap-container");
+  if (prev) prev.remove();
+
+  if (capMap[rawChoice]) {
+    // Build container and img
+    const capContainer = document.createElement("div");
+    capContainer.id = "cap-container";
+    capContainer.className = "cap-container";
+
+    const capImg = document.createElement("img");
+    capImg.src = capMap[rawChoice];
+    capImg.alt = rawChoice + " cap";
+    capImg.loading = "lazy";
+    capImg.classList.add("cap-icon");
+
+    capContainer.appendChild(capImg);
+
+    // Append as third child of .header so flex pushes it to the right
+    const headerEl = document.querySelector(".header");
+    if (headerEl) headerEl.appendChild(capContainer);
+  }
+}
+// --- END: cap choice display ---
   }
 }
 
@@ -324,23 +377,6 @@ if (duplicateFound) {
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
