@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexora Cap Summary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f7;
+      margin: 0;
+      padding: 40px 20px;
+      color: #222;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 32px 40px;
+    }
+
+    .title {
+      margin: 0 0 12px 0;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0 0 28px 0;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      background: #fff;
+    }
+
+    .card img {
+      width: 100%;
+      max-width: 360px;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 14px auto;
+    }
+
+    .label {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .count {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .total-box {
+      margin-top: 24px;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .total-label {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .total-count {
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .status {
+      margin-top: 12px;
+      font-size: 13px;
+      color: #777;
+    }
+
+    @media (max-width: 720px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1 class="title">Nexora Cap Summary</h1>
+    <p class="subtitle">
+      Live counts from the Google Sheet. The page reads the published CSV, looks at column L / <strong>Cap Choice</strong>,
+      and totals the gold and cardinal selections.
+    </p>
+
+    <div class="grid">
+      <div class="card">
+        <img src="/nexora-profiles/images/gold.png" alt="Gold cap">
+        <div class="label">Gold</div>
+        <div class="count" id="goldCount">—</div>
+      </div>
+
+      <div class="card">
+        <img src="/nexora-profiles/images/cardinal.png" alt="Cardinal cap">
+        <div class="label">Cardinal</div>
+        <div class="count" id="cardinalCount">—</div>
+      </div>
+    </div>
+
+    <div class="total-box">
+      <div class="total-label">Total responses counted</div>
+      <div class="total-count" id="totalCount">—</div>
+    </div>
+
+    <div class="status" id="status">Loading data…</div>
+  </div>
+
+  <script>
+    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1WJwgffdxDgnn5ttuJAvgUYeWDmR-o0oOCXlHu-7qXfQ/export?format=csv&gid=154702468";
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        const next = line[i + 1];
+
+        if (char === '"' && inQuotes && next === '"') {
+          current += '"';
+          i++;
+        } else if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current);
+          current = "";
+        } else {
+          current += char;
+        }
+      }
+
+      result.push(current);
+      return result;
+    }
+
+    function parseCSV(text) {
+      const lines = text.replace(/\r/g, "").split("\n").filter(Boolean);
+      if (!lines.length) return [];
+
+      const headers = parseCSVLine(lines[0]).map(h => h.trim().toLowerCase());
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const values = parseCSVLine(lines[i]);
+        const row = {};
+        headers.forEach((h, idx) => {
+          row[h] = (values[idx] || "").trim();
+        });
+        rows.push(row);
+      }
+      return rows;
+    }
+
+    function normalizeCapChoice(value) {
+      return String(value || "").toLowerCase().trim();
+    }
+
+    function getCapChoiceField(row) {
+      return row["cap choice"] || row["capchoice"] || row["cap"] || "";
+    }
+
+    async function loadCounts() {
+      const status = document.getElementById("status");
+      try {
+        status.textContent = "Loading data…";
+        const response = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const csvText = await response.text();
+        const rows = parseCSV(csvText);
+
+        let gold = 0;
+        let cardinal = 0;
+
+        for (const row of rows) {
+          const cap = normalizeCapChoice(getCapChoiceField(row));
+          if (cap.includes("gold")) gold++;
+          else if (cap.includes("cardinal")) cardinal++;
+        }
+
+        document.getElementById("goldCount").textContent = gold;
+        document.getElementById("cardinalCount").textContent = cardinal;
+        document.getElementById("totalCount").textContent = rows.length;
+        status.textContent = `Updated ${new Date().toLocaleTimeString()}.`;
+      } catch (err) {
+        status.textContent = `Error loading sheet: ${err.message}`;
+        document.getElementById("goldCount").textContent = "—";
+        document.getElementById("cardinalCount").textContent = "—";
+        document.getElementById("totalCount").textContent = "—";
+      }
+    }
+
+    loadCounts();
+    setInterval(loadCounts, 30000);
+  </script>
+</body>
+</html>
