@@ -197,7 +197,6 @@ const interestsIndex = cleanHeaders.indexOf("Personal");
 const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
 const idStatusIndex = cleanHeaders.indexOf("ID_Status");
 
-const lockIndex = cleanHeaders.indexOf("Submission Locked");
 const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
 
       if (normalizedIdIndex === -1) {
@@ -209,7 +208,6 @@ const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
 
       let duplicateFound = false;
 
-console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
@@ -376,7 +374,6 @@ if (duplicateFound) {
 
 </body>
 </html>
-
 
 
 
