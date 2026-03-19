@@ -109,9 +109,19 @@
 
     <div class="grid">
       <div class="card">
+        <img src="/nexora-profiles/images/gold.png" alt="Gold cap">
+        <div class="label">Gold</div>
+        <div class="count" id="goldCount">—</div>
+      </div>
+
+      <div class="card">
         <img src="/nexora-profiles/images/cardinal.png" alt="Cardinal cap">
         <div class="label">Cardinal</div>
-        <div class="count" id="cardinalCount"></div>
+        <div class="count" id="cardinalCount">—</div>
+      </div>
+    </div>
+    
+  </div>
 
   <script>
     const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1WJwgffdxDgnn5ttuJAvgUYeWDmR-o0oOCXlHu-7qXfQ/export?format=csv&gid=154702468";
@@ -191,8 +201,8 @@
         document.getElementById("cardinalCount").textContent = cardinal;        
       } catch (err) {
         
-        document.getElementById("goldCount").textContent = "";
-        document.getElementById("cardinalCount").textContent = "";      }
+        document.getElementById("goldCount").textContent = "—";
+        document.getElementById("cardinalCount").textContent = "—";      }
     }
 
     loadCounts();
