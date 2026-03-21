@@ -88,18 +88,16 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
-/* Image containers next to student name */
-.cap-container,
-.season-container {
+/* Cap container next to student name */
+.cap-container {
   display: flex;
   align-items: center;
-  margin-left: 24px;   /* keeps them near the name */
+  margin-left: 24px;   /* keeps it near the name */
   gap: 12px;
 }
 
-/* Force both images to fill identical box */
-.header > .cap-container > img.cap-icon,
-.header > .season-container > img.season-icon {
+/* Force both caps to fill identical box */
+.header > .cap-container > img.cap-icon {
   width: 110px;           /* adjust if you want bigger/smaller */
   height: 85px;
   object-fit: cover;      /* THIS makes them visually the same size */
@@ -311,29 +309,23 @@ if (imageCell) {
     };
 
     imageElement.src = driveImageUrl;
-    // --- BEGIN: cap and season display (right of name/role) ---
+    // --- BEGIN: cap choice display (right of name/role) ---
 const capChoiceIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "cap choice");
-const seasonIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "season");
-
-const imageBaseUrl = "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/";
-
-// Remove any existing image containers to avoid duplicates
-const prevCap = document.getElementById("cap-container");
-if (prevCap) prevCap.remove();
-const prevSeason = document.getElementById("season-container");
-if (prevSeason) prevSeason.remove();
-
-const headerEl = document.querySelector(".header");
 
 if (capChoiceIndex !== -1) {
   const rawChoice = (row[capChoiceIndex] || "").trim().toLowerCase();
 
   const capMap = {
-    "cardinal": imageBaseUrl + "cardinal.png",
-    "gold":     imageBaseUrl + "gold.png"
+    "cardinal": "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/cardinal.png",
+    "gold":     "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/gold.png"
   };
 
+  // Remove any existing cap container to avoid duplicates
+  const prev = document.getElementById("cap-container");
+  if (prev) prev.remove();
+
   if (capMap[rawChoice]) {
+    // Build container and img
     const capContainer = document.createElement("div");
     capContainer.id = "cap-container";
     capContainer.className = "cap-container";
@@ -345,47 +337,13 @@ if (capChoiceIndex !== -1) {
     capImg.classList.add("cap-icon");
 
     capContainer.appendChild(capImg);
+
+    // Append as third child of .header so flex pushes it to the right
+    const headerEl = document.querySelector(".header");
     if (headerEl) headerEl.appendChild(capContainer);
   }
 }
-
-if (seasonIndex !== -1) {
-  const rawSeason = (row[seasonIndex] || "").trim().toLowerCase();
-
-  const seasonMap = {
-    "spring": ["/nexora-profiles/images/spring.png", imageBaseUrl + "spring.png"],
-    "summer": ["/nexora-profiles/images/summer.png", imageBaseUrl + "summer.png"],
-    "fall":   ["/nexora-profiles/images/fall.png",   imageBaseUrl + "fall.png"],
-    "winter": ["/nexora-profiles/images/winter.png", imageBaseUrl + "winter.png"]
-  };
-
-  const seasonUrls = seasonMap[rawSeason];
-
-  if (seasonUrls) {
-    const seasonContainer = document.createElement("div");
-    seasonContainer.id = "season-container";
-    seasonContainer.className = "season-container";
-
-    const seasonImg = document.createElement("img");
-    seasonImg.alt = rawSeason + " season";
-    seasonImg.loading = "lazy";
-    seasonImg.classList.add("season-icon");
-
-    let seasonUrlIndex = 0;
-    const tryNextSeasonUrl = () => {
-      if (seasonUrlIndex < seasonUrls.length) {
-        seasonImg.src = seasonUrls[seasonUrlIndex++];
-      }
-    };
-
-    seasonImg.onerror = tryNextSeasonUrl;
-    tryNextSeasonUrl();
-
-    seasonContainer.appendChild(seasonImg);
-    if (headerEl) headerEl.appendChild(seasonContainer);
-  }
-}
-// --- END: cap and season display ---
+// --- END: cap choice display ---
   }
 }
 
