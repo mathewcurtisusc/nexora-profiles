@@ -88,16 +88,18 @@
     font-size: 14px;
     margin: 0 0 12px 0;
   }
-/* Cap container next to student name */
-.cap-container {
+/* Image containers next to student name */
+.cap-container,
+.season-container {
   display: flex;
   align-items: center;
-  margin-left: 24px;   /* keeps it near the name */
+  margin-left: 24px;   /* keeps them near the name */
   gap: 12px;
 }
 
-/* Force both caps to fill identical box */
-.header > .cap-container > img.cap-icon {
+/* Force both images to fill identical box */
+.header > .cap-container > img.cap-icon,
+.header > .season-container > img.season-icon {
   width: 110px;           /* adjust if you want bigger/smaller */
   height: 85px;
   object-fit: cover;      /* THIS makes them visually the same size */
@@ -197,6 +199,7 @@ const interestsIndex = cleanHeaders.indexOf("Personal");
 const imageIndex = cleanHeaders.indexOf("Nexora Profile Image");
 const idStatusIndex = cleanHeaders.indexOf("ID_Status");
 
+const lockIndex = cleanHeaders.indexOf("Submission Locked");
 const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
 
       if (normalizedIdIndex === -1) {
@@ -208,6 +211,7 @@ const normalizedIdIndex = cleanHeaders.indexOf("Normalized Nexora ID");
 
       let duplicateFound = false;
 
+console.log("ID_Status index:", idStatusIndex);
 
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
@@ -307,41 +311,77 @@ if (imageCell) {
     };
 
     imageElement.src = driveImageUrl;
-    // --- BEGIN: cap choice display (right of name/role) ---
+    // --- BEGIN: cap and season display (right of name/role) ---
 const capChoiceIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "cap choice");
+const seasonIndex = cleanHeaders.findIndex(h => h.trim().toLowerCase() === "season");
+const capChoiceCellIndex = capChoiceIndex !== -1 ? capChoiceIndex : 11;   // column L fallback
+const seasonCellIndex = seasonIndex !== -1 ? seasonIndex : 12;             // column M fallback
 
-if (capChoiceIndex !== -1) {
-  const rawChoice = (row[capChoiceIndex] || "").trim().toLowerCase();
+const imageBaseUrl = "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/";
 
-  const capMap = {
-    "cardinal": "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/cardinal.png",
-    "gold":     "https://raw.githubusercontent.com/mathewcurtisusc/nexora-profiles/main/images/gold.png"
+// Remove any existing image containers to avoid duplicates
+const prevCap = document.getElementById("cap-container");
+if (prevCap) prevCap.remove();
+const prevSeason = document.getElementById("season-container");
+if (prevSeason) prevSeason.remove();
+
+const headerEl = document.querySelector(".header");
+
+const rawChoice = (row[capChoiceCellIndex] || "").trim().toLowerCase();
+const capMap = {
+  "cardinal": imageBaseUrl + "cardinal.png",
+  "gold":     imageBaseUrl + "gold.png"
+};
+
+if (capMap[rawChoice]) {
+  const capContainer = document.createElement("div");
+  capContainer.id = "cap-container";
+  capContainer.className = "cap-container";
+
+  const capImg = document.createElement("img");
+  capImg.src = capMap[rawChoice];
+  capImg.alt = rawChoice + " cap";
+  capImg.loading = "lazy";
+  capImg.classList.add("cap-icon");
+
+  capContainer.appendChild(capImg);
+  if (headerEl) headerEl.appendChild(capContainer);
+}
+
+const rawSeason = (row[seasonCellIndex] || "").trim().toLowerCase();
+const seasonMap = {
+  "spring": ["/nexora-profiles/images/spring.png", imageBaseUrl + "spring.png"],
+  "summer": ["/nexora-profiles/images/summer.png", imageBaseUrl + "summer.png"],
+  "fall":   ["/nexora-profiles/images/fall.png",   imageBaseUrl + "fall.png"],
+  "winter": ["/nexora-profiles/images/winter.png", imageBaseUrl + "winter.png"]
+};
+
+const seasonUrls = seasonMap[rawSeason];
+
+if (seasonUrls) {
+  const seasonContainer = document.createElement("div");
+  seasonContainer.id = "season-container";
+  seasonContainer.className = "season-container";
+
+  const seasonImg = document.createElement("img");
+  seasonImg.alt = rawSeason + " season";
+  seasonImg.loading = "lazy";
+  seasonImg.classList.add("season-icon");
+
+  let seasonUrlIndex = 0;
+  const tryNextSeasonUrl = () => {
+    if (seasonUrlIndex < seasonUrls.length) {
+      seasonImg.src = seasonUrls[seasonUrlIndex++];
+    }
   };
 
-  // Remove any existing cap container to avoid duplicates
-  const prev = document.getElementById("cap-container");
-  if (prev) prev.remove();
+  seasonImg.onerror = tryNextSeasonUrl;
+  tryNextSeasonUrl();
 
-  if (capMap[rawChoice]) {
-    // Build container and img
-    const capContainer = document.createElement("div");
-    capContainer.id = "cap-container";
-    capContainer.className = "cap-container";
-
-    const capImg = document.createElement("img");
-    capImg.src = capMap[rawChoice];
-    capImg.alt = rawChoice + " cap";
-    capImg.loading = "lazy";
-    capImg.classList.add("cap-icon");
-
-    capContainer.appendChild(capImg);
-
-    // Append as third child of .header so flex pushes it to the right
-    const headerEl = document.querySelector(".header");
-    if (headerEl) headerEl.appendChild(capContainer);
-  }
+  seasonContainer.appendChild(seasonImg);
+  if (headerEl) headerEl.appendChild(seasonContainer);
 }
-// --- END: cap choice display ---
+// --- END: cap and season display ---
   }
 }
 
